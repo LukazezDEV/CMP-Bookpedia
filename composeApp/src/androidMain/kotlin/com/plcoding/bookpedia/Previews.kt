@@ -10,10 +10,11 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
+import com.plcoding.bookpedia.book.domain.Book
+import com.plcoding.bookpedia.book.domain.BookMockAttributes
 import com.plcoding.bookpedia.book.presentation.book_list.BookListScreen
 import com.plcoding.bookpedia.book.presentation.book_list.BookListState
 import com.plcoding.bookpedia.book.presentation.book_list.components.BookSearchBar
-import com.plcoding.bookpedia.book.presentation.book_list.mockBooks
 import com.plcoding.bookpedia.core.presentation.SandYellow
 
 @Preview
@@ -41,6 +42,23 @@ private fun BookSearchBarPreview() {
     }
 }
 
+private val mockBooks = (0..BookMockAttributes.books.lastIndex).map{
+    Book(
+        id = "$it",
+        title = BookMockAttributes.books[it],
+        imageUrl = BookMockAttributes.urls[it],
+        authors = BookMockAttributes.randomAuthors(),
+        description = "Mock Description.",
+        languages = BookMockAttributes.randomLanguages(),
+        firstPublishYear = (1900..2025).random(),
+        genres = BookMockAttributes.randomGenres(),
+        averageRating = (25..50).random() / 10.0,
+        numRatings = (1..1_500_000).random(),
+        numPages = (20..800).random(),
+        numEditions = (1..6).random(),
+    )
+}
+
 @Preview
 @Composable
 private fun BookListScreenPreview(){
@@ -50,4 +68,10 @@ private fun BookListScreenPreview(){
         ),
         onAction = {}
     )
+}
+
+@Preview
+@Composable
+private fun BookDetailScreenPreview(){
+//    BookDetailScreen()
 }

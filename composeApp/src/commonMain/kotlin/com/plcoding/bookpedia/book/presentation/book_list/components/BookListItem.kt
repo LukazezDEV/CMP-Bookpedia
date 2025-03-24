@@ -38,6 +38,7 @@ import coil3.compose.rememberAsyncImagePainter
 import com.plcoding.bookpedia.book.domain.Book
 import com.plcoding.bookpedia.core.presentation.LightBlue
 import com.plcoding.bookpedia.core.presentation.SandYellow
+import com.plcoding.bookpedia.core.presentation.getCommaSeparated
 import org.jetbrains.compose.resources.painterResource
 import kotlin.math.round
 
@@ -156,7 +157,7 @@ fun BookListItem(
                             tint = SandYellow
                         )
                         Text(
-                            text = "(${book.numRatings})",
+                            text = "(${book.numRatings?.getCommaSeparated()})",
                             style = MaterialTheme.typography.bodySmall,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
