@@ -6,7 +6,7 @@ import org.jetbrains.compose.resources.stringResource
 
 
 sealed interface UiText {
-    data class DynamicString(val value: String): UiText
+    data class DirectString(val value: String): UiText
     class StringResourceId(
         val id: StringResource,
         val args: Array<Any> = arrayOf()
@@ -15,7 +15,7 @@ sealed interface UiText {
     @Composable
     fun asString(): String {
         return when(this) {
-            is DynamicString -> value
+            is DirectString -> value
             is StringResourceId -> stringResource(resource = id, formatArgs = args)
         }
     }
