@@ -1,7 +1,6 @@
 package com.plcoding.bookpedia.book.presentation.book_detail
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -31,7 +30,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cmp_bookpedia.composeapp.generated.resources.Res
 import cmp_bookpedia.composeapp.generated.resources.book_description
 import cmp_bookpedia.composeapp.generated.resources.book_description_missing
-import cmp_bookpedia.composeapp.generated.resources.book_genres
+import cmp_bookpedia.composeapp.generated.resources.book_subjects
 import cmp_bookpedia.composeapp.generated.resources.book_languages
 import cmp_bookpedia.composeapp.generated.resources.book_pages
 import cmp_bookpedia.composeapp.generated.resources.book_rating
@@ -54,11 +53,11 @@ fun BookDetailScreenRoot(
     BookDetailScreen(
         state = state,
         onAction = { action ->
-            when(action){
-                BookDetailAction.OnBackClick -> onBackClick()
-                BookDetailAction.OnFavoriteClick -> TODO()
-                is BookDetailAction.OnSelectBookChange -> TODO()
+            when(action) {
+                is BookDetailAction.OnBackClick -> onBackClick()
+                else -> Unit
             }
+            viewModel.onAction(action)
         }
     )
 }
@@ -100,7 +99,7 @@ private fun BookDetailScreen(
                     ?.let { authors ->
                         Text(
                             text = authors,
-                            style = MaterialTheme.typography.titleSmall,
+                            style = MaterialTheme.typography.bodyLarge,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                             modifier = Modifier.padding(top = 8.dp, bottom = 12.dp)
@@ -114,7 +113,7 @@ private fun BookDetailScreen(
                         TitledContent(
                             title = stringResource(Res.string.book_rating),
                         ){
-                            BookDataBubble {
+                             BookDataBubble {
                                 Text(
                                     text = "${round(rating * 10) / 10.0}",
                                     style = MaterialTheme.typography.bodyMedium,
@@ -195,19 +194,20 @@ private fun BookDetailScreen(
                         }
                     }
 
-                book.genres
-                    .filter { it.isNotBlank() }
+                book.subjects?.run {
+                    filter { it.isNotBlank() }
                     .takeIf { it.isEmpty().not() }
-                    ?.let { genres ->
+                    ?.take(10)
+                    ?.let { subjects ->
                         TitledContent(
-                            title = stringResource(Res.string.book_genres),
+                            title = stringResource(Res.string.book_subjects),
                             modifier = Modifier.padding(vertical = 48.dp)
                         ){
                             FlowRow(
                                 horizontalArrangement = Arrangement.Center,
                                 modifier = Modifier.wrapContentSize(Alignment.Center)
                             ){
-                                genres.forEach {
+                                subjects.forEach {
                                     BookDataBubble(
                                         size = BubbleSize.REGULAR,
                                         modifier = Modifier.padding(2.dp)
@@ -222,6 +222,8 @@ private fun BookDetailScreen(
                             }
                         }
                     }
+                }
+
 
                 Text(
                     text = stringResource(Res.string.book_description),
@@ -231,12 +233,6 @@ private fun BookDetailScreen(
                         .fillMaxWidth()
                         .padding(top = 24.dp, bottom = 8.dp,)
                 )
-//                Box(
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .weight(1f),
-//                    contentAlignment = Alignment.Center,
-//                ){
                     if(state.isLoading)
                         CircularProgressIndicator()
                     else
@@ -244,12 +240,11 @@ private fun BookDetailScreen(
                             text = if(!book.description.isNullOrBlank()) book.description
                                    else stringResource(Res.string.book_description_missing),
                             style = MaterialTheme.typography.bodyMedium,
-                            textAlign = TextAlign.Justify,
+                            textAlign = TextAlign.Left,
                             color = if(!book.description.isNullOrBlank()) Color.Black
                                     else Color.Black.copy(alpha = 0.4f),
                             modifier = Modifier.padding(vertical = 8.dp)
                         )
-//                }
             }
     }
 }

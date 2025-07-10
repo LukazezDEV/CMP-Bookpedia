@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -46,6 +47,7 @@ import cmp_bookpedia.composeapp.generated.resources.remove_favorite
 import coil3.compose.rememberAsyncImagePainter
 import com.plcoding.bookpedia.core.presentation.DarkBlue
 import com.plcoding.bookpedia.core.presentation.DesertWhite
+import com.plcoding.bookpedia.core.presentation.PulseAnimation
 import com.plcoding.bookpedia.core.presentation.SandYellow
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -126,7 +128,6 @@ fun BlurredBookCover(
                     .height(230.dp)
                     .aspectRatio(2 / 3f),
                 shape = RoundedCornerShape(8.dp),
-                colors = CardDefaults.elevatedCardColors(containerColor = Color.Transparent), //for just an elevated effect
                 elevation = CardDefaults.elevatedCardElevation(defaultElevation = 15.dp),
             ){
                 AnimatedContent(
@@ -134,7 +135,13 @@ fun BlurredBookCover(
                 ){ result ->
                     Box {
                         when(result){
-                            null -> CircularProgressIndicator()
+                            null ->
+                                Box(
+                                    modifier = Modifier.fillMaxSize(),
+                                    contentAlignment = Alignment.Center
+                                ){
+                                    PulseAnimation(modifier = Modifier.size(60.dp))
+                                }
                             else -> {
                                 Image(
                                     painter = if (result.isSuccess) painter else painterResource(Res.drawable.book_error_2),

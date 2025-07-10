@@ -20,9 +20,9 @@ kotlinSerialization = "1.7.3"
 koin = "4.0.0"
 ktor = "3.0.0"
 coil3 = "3.0.0-rc02"
-ksp = "2.0.20-1.0.24"
-sqlite = "2.5.0-alpha11"
-room = "2.7.0-alpha11"
+ksp = "2.0.21-1.0.27"
+sqlite = "2.5.0-rc02"
+room = "2.7.0-rc03"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }

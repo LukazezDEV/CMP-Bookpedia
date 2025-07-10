@@ -1,10 +1,13 @@
 package com.plcoding.bookpedia.di
 
+import androidx.sqlite.driver.bundled.BundledSQLiteDriver
+import com.plcoding.bookpedia.book.data.database.DatabaseFactory
+import com.plcoding.bookpedia.book.data.database.FavoriteBookDatabase
 import com.plcoding.bookpedia.book.data.network.KtorRemoteBookDataSource
 import com.plcoding.bookpedia.book.data.network.RemoteBookDataSource
 import com.plcoding.bookpedia.core.data.HttpClientFactory
-import com.plcoding.bookpedia.book.data.repository.RemoteBookRepository
-import com.plcoding.bookpedia.book.domain.BookRepository
+import com.plcoding.bookpedia.book.data.repository.BookRepository
+import com.plcoding.bookpedia.book.domain.DomainBookRepository
 import com.plcoding.bookpedia.book.presentation.SelectedBookViewModel
 import com.plcoding.bookpedia.book.presentation.book_detail.BookDetailViewModel
 import com.plcoding.bookpedia.book.presentation.book_list.BookListViewModel
@@ -19,7 +22,7 @@ import org.koin.dsl.module
 fun initKoin(config: KoinAppDeclaration? = null){
     startKoin {
         config?.invoke(this)
-        modules(sharedModule, platformModule)
+        modules(sharedModule    , platformModule)
     }
 }
 
@@ -28,7 +31,14 @@ expect val platformModule: Module
 val sharedModule = module {
     single { HttpClientFactory.create(get()) }
     singleOf(::KtorRemoteBookDataSource).bind<RemoteBookDataSource>()
-    singleOf(::RemoteBookRepository).bind<BookRepository>()
+    singleOf(::BookRepository).bind<DomainBookRepository>()
+
+    single {
+        get<DatabaseFactory>().create()
+            .setDriver(BundledSQLiteDriver())
+            .build()
+    }
+    single { get<FavoriteBookDatabase>().favoriteBookDao }
 
     viewModelOf(::BookListViewModel)
     viewModelOf(::BookDetailViewModel)

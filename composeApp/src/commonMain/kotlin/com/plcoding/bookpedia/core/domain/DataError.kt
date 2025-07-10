@@ -1,5 +1,7 @@
 package com.plcoding.bookpedia.core.domain
 
+interface Error
+
 sealed interface DataError: Error {
     enum class Remote: DataError {
         REQUEST_TIMEOUT,

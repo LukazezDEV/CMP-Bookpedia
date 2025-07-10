@@ -3,7 +3,8 @@ package com.plcoding.bookpedia.book.presentation.book_list
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.plcoding.bookpedia.book.domain.Book
-import com.plcoding.bookpedia.book.domain.BookRepository
+import com.plcoding.bookpedia.book.domain.DomainBookRepository
+import com.plcoding.bookpedia.core.domain.DataError
 import com.plcoding.bookpedia.core.domain.onError
 import com.plcoding.bookpedia.core.domain.onSuccess
 import com.plcoding.bookpedia.core.presentation.toUiText
@@ -11,6 +12,7 @@ import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
@@ -23,10 +25,11 @@ import kotlinx.coroutines.launch
 
 @OptIn(FlowPreview::class)
 class BookListViewModel(
-    private val bookRepository: BookRepository
+    private val bookRepository: DomainBookRepository
 ): ViewModel() {
     private var cachedBooks = emptyList<Book>()
     private var searchJob: Job? = null
+    private var loadFavoritesJob: Job? = null
 
     private val _state = MutableStateFlow(BookListState())
     val state = _state
@@ -34,6 +37,7 @@ class BookListViewModel(
             if(cachedBooks.isEmpty()){
                 observeSearchQuery()
             }
+            loadFavoriteBooks()
         }
         .stateIn(
             viewModelScope,
@@ -94,5 +98,30 @@ class BookListViewModel(
                     errorMessage = error.toUiText()
                 ) }
             }
+    }
+
+    private fun loadFavoriteBooks(){
+        loadFavoritesJob?.cancel()
+        loadFavoritesJob = bookRepository
+            .getFavoriteBooks()
+            .onStart {
+                _state.update { it.copy(isLoading = true) }
+            }
+            .onEach { favoriteBooks ->
+                _state.update { it.copy(
+                    favoriteBooks = favoriteBooks,
+                    isLoading = false,
+                    errorMessage = null
+                ) }
+            }
+            .catch { throwable ->
+                throwable.printStackTrace()
+                _state.update { it.copy(
+                    favoriteBooks = emptyList(),
+                    isLoading = false,
+                    errorMessage = DataError.Local.UNKNOWN.toUiText()
+                ) }
+            }
+            .launchIn(viewModelScope)
     }
 }

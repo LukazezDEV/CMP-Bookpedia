@@ -17,7 +17,7 @@
     <string name="book_year">First Published</string>
     <string name="book_pages">Pages</string>
     <string name="book_languages">Languages</string>
-    <string name="book_genres">Genres</string>
+    <string name="book_subjects">Themes</string>
     <string name="book_description">Description</string>
     <string name="book_description_missing">Description not available.</string>
     <string name="back">Go back</string>

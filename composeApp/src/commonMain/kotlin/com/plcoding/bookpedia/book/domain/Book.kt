@@ -10,16 +10,21 @@ data class Book(
     val description: String?,
     val languages: List<String>,
     val firstPublishYear: Int?,
-    val genres: List<String>,
+    val subjects: List<String>?,
     val averageRating: Double?,
     val numRatings: Int?,
     val numPages: Int?,
     val numEditions: Int?
 )
 
+data class BookDetails(
+    val description: String?,
+    val subjects: List<String>?
+)
+
 object BookMockAttributes{
-    fun randomGenres(maxAmount: Int = 4) = genres.shuffled().take(Random.nextInt(1, maxAmount))
-    private val genres = setOf(
+    fun randomSubjects(maxAmount: Int = 4) = subjects.shuffled().take(Random.nextInt(1, maxAmount))
+    private val subjects = setOf(
     "Fantasy",
     "Science Fiction",
     "Mystery",

@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class SearchResponseObject(
+data class BookSearchResponseObject(
     @SerialName("docs") val results: List<BookResponseObject>
 )
 
@@ -22,5 +22,5 @@ data class BookResponseObject(
     @SerialName("cover_edition_key") val coverKey: String? = null,
     @SerialName("cover_i") val altCoverKey: Int? = null,
     @SerialName("language") val languages: List<String>? = null,
-    @SerialName("genre") val genres: List<String>? = null
+    @SerialName("subjects") val subjects: List<String>? = null
  )
